@@ -4,18 +4,12 @@
 Servo motor;
 
 void setup() {
+  // Serial.begin(9600);
   motor.attach(MOTOR_PIN);
-  Serial.begin(57600);
-  // User user1 = addUser("02:00:00:00:00:00", "1234567800000000");
-  // char* m1 = string2ptr(String("open") + String("#") + user1.id);
-  // aes128_enc_single((uint8_t *)(user1.password).c_str(), m1);
+  motor.write(90);
+  Serial.begin(9600);
 
-  // String* plain_text_splitted1 = authorize(user1.id, String(""));
-  // process_cmd(plain_text_splitted1, motor);
-  
-  // delay(200);
-
-  // User user2 = addUser("2", "8765432100000000");
+  // User user2 = addUser("02:00:00:00:00:00", "1234567800000000");
   // char* m2 = string2ptr(String("lock") + String("#") + user2.id);
   // aes128_enc_single((uint8_t *)(user2.password).c_str(), m2);
   // String* plain_text_splitted2 = authorize(user2.id, String(m2));
@@ -23,6 +17,8 @@ void setup() {
 }
 
 void loop() {
+  // if(Serial.available()) {
+  // }
   recv_cmd(motor);
-  // delay(1000);
+  delay(1000);
 }

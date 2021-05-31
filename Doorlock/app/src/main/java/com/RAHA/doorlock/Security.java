@@ -76,4 +76,12 @@ public class Security {
         System.arraycopy(data, 0, ans, strd.length, data.length);
         return ans;
     }
+
+    public static byte[] AddNewline(byte[] data) {
+        byte[] strd = "\n".getBytes();
+        byte[] ans = new byte[strd.length + data.length];
+        System.arraycopy(data, 0, ans, 0, data.length);
+        System.arraycopy(strd, 0, ans, data.length, strd.length);
+        return ans;
+    }
 }

@@ -13,6 +13,7 @@ typedef unsigned char BYTE;
 #define SERVO_OPEN_POSITION 0
 #define SERVO_LOCK_POSITION 79
 
+
 class User {
   public:
     User(String id_, String password_) {
@@ -26,9 +27,9 @@ class User {
     String password;
 };
 
-String* authorize(String id, String cypher_text);
-User addUser(String id, String password);
-void removeUser(String id);
+String* authorize(String message);
+// User addUser(String id, String password);
+// void removeUser(String id);
 char* getPassword(String id);
 void processCommand(String cmd);
 char* string2ptr(String str);
