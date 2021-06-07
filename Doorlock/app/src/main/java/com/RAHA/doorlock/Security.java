@@ -55,7 +55,9 @@ public class Security {
         cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, secret);
         byte[] cipherText = cipher.doFinal(message.getBytes("UTF-8"));
-        return cipherText;
+        byte[] ans = new byte[message.length()];
+        System.arraycopy(cipherText, 0, ans, 0, message.length());
+        return ans;
     }
 
     public static String decryptMsg(byte[] cipherText, SecretKey secret)

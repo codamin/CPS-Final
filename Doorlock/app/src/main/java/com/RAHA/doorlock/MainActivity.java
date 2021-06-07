@@ -168,15 +168,18 @@ public class MainActivity extends AppCompatActivity {
             {
 //                String toSend = myAddress+"#"+Security.run("open#"+myAddress);
 //                Log.d("Main", ">>>>>>>>>>>>>>>>>Open__"+toSend);
-////                Log.d("Main", ">>>>>>>>>>>>>>>>>Open_"+String.format("%x", new BigInteger(1, toSend.getBytes("UTF-8"))));
+//                Log.d("Main", ">>>>>>>>>>>>>>>>>Open_"+String.format("%x", new BigInteger(1, toSend.getBytes("UTF-8"))));
 ////                myBtSocket.getOutputStream().write(toSend.getBytes());
-//                byte[] message = Security.mergeByteString(myAddress+"#", Security.run("open#"+myAddress));
-//                byte[] tmpf = Security.run("open#"+myAddress);
-//                for (byte b: tmpf){
-//                    Log.i("myactivity", String.format("0x%20x", b));
-//                }
-//                myBtSocket.getOutputStream().write(Security.AddNewline(message));
-                myBtSocket.getOutputStream().write(("open#" + myAddress + "\r").getBytes());
+                byte[] message = Security.mergeByteString(myAddress+"#", Security.run("open#"+myAddress+"#000000000"));
+                byte[] tmpf = Security.run("open#"+myAddress+ "#000000000");
+
+                int i = 0;
+                for (byte b: tmpf){
+                    Log.i("myactivity", String.format("0x%20x", b)+ "--" + String.valueOf(i));
+                    i += 1;
+                }
+                myBtSocket.getOutputStream().write(Security.AddNewline(message));
+//                myBtSocket.getOutputStream().write(("open#" + myAddress + "\r").getBytes());
             }
             catch (IOException e)
             {
