@@ -27,7 +27,7 @@ class User {
     String password;
 };
 
-String* authorize(String message);
+String* authorize(String id, String cypher);
 // User addUser(String id, String password);
 // void removeUser(String id);
 char* getPassword(String id);

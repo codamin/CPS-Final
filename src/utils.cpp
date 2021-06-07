@@ -4,11 +4,9 @@
 char* user_id = "02:00:00:00:00:00";
 char* pass = "1234567800000000";
 
-
 char input;
 char message[MSG_MAX_LEN];
 int msg_idx = 0;
-
 // User* users = new User[MAX_USERS_NUMBER];
 // User  = User("02:00:00:00:00:00", "1234567800000000");
 // char* user_id = "02:00:00:00:00:00";
@@ -24,7 +22,7 @@ int msg_idx = 0;
 // mbedtls_aes_free( &aes );
 
 
-int users_size = 0;
+int users_size = 0; 
 
 void open(Servo motor) {
   motor.write(180);
@@ -38,33 +36,32 @@ void lock(Servo motor) {
 }
 
 
-String* authorize(String plain_text) {
-  // Serial.println("before0");
-  // char* password = getPassword(id);
-  // char* password = getPassword(id);
+String* authorize(String id, String cypher) {
   // if(!password) {
   //     Serial.println("user not found");
   //     return NULL;
   // }
-  // char* cypher_text = string2ptr(cypher_text_string);
-  // Serial.println("before2");
-  // aes128_dec_single((uint8_t *)pass, cypher_text);
-  // Serial.println("after");
-  // String plain_text = String(cypher_text);
+  char* cypher_cstr = string2ptr(cypher);
+  aes128_dec_multiple((uint8_t *)pass, cypher_cstr, 32);
+  String plain_text = String(cypher_cstr);
 
-  // delete[] cypher_text;
+  delete[] cypher_cstr;
 
   String* plain_text_splitted = new String[MAX_SPLIT_SIZE];
   plain_text_splitted = split(plain_text, '#');
-
-  if(plain_text_splitted[1] != user_id) {
-      Serial.println("user not allowed");
-      return NULL;
-  }
-  else {
-      Serial.println("Success!");
-      return plain_text_splitted;
-  }
+  
+  Serial.println("CMD");
+  Serial.println(plain_text_splitted[0]);
+  Serial.println("ID");
+  Serial.println(plain_text_splitted[1]);
+  // if(plain_text_splitted[1] != user_id) {
+  //     Serial.println("user not allowed");
+  //     return NULL;
+  // }
+  // else {
+  //     Serial.println("Success!");
+  //     return plain_text_splitted;
+  // }
 }
 
 // User addUser(String id, String password) {
@@ -132,12 +129,17 @@ String* split(String str , char c) {
 
 void recv_cmd(Servo motor) {
   if(Serial.available()) {
-    input = Serial.read();
+    input = Serial.read(); 
     if(input == '\r') {
         message[msg_idx]= '\0';
         Serial.println(message);
-        String* plain_text_splitted1 = authorize(message);
-        process_cmd(plain_text_splitted1, motor);
+
+        String* splitted_message = split(message, '#');
+        String id = splitted_message[0];
+        String cypher = splitted_message[1];
+
+        String* plain_text_splitted1 = authorize(id, cypher);
+        process_cmd(plain_text_splitted1, motor);  
         msg_idx = 0;
         for (int i = 0; i < MSG_MAX_LEN; ++i)
           message[i] = 0;
@@ -152,7 +154,7 @@ void recv_cmd(Servo motor) {
 void process_cmd(String* plain_text_splitted, Servo motor) {
   if(plain_text_splitted[0] == "open") {
   Serial.println("unlocking");
-  open(motor);
+    open(motor);
   }
   if(plain_text_splitted[0] == "lock") {
     Serial.println("locking");
