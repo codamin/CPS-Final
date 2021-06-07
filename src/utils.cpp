@@ -130,7 +130,7 @@ String* split(String str , char c) {
   return splitted;
 }
 
-String recv_cmd(Servo motor) {
+void recv_cmd(Servo motor) {
   if(Serial.available()) {
     input = Serial.read();
     if(input == '\r') {

@@ -17,8 +17,5 @@ void setup() {
 }
 
 void loop() {
-  // if(Serial.available()) {
-  // }
   recv_cmd(motor);
-  delay(1000);
 }
