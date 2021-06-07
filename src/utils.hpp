@@ -12,7 +12,7 @@ typedef unsigned char BYTE;
 #define MOTOR_PIN 8
 #define SERVO_OPEN_POSITION 0
 #define SERVO_LOCK_POSITION 79
-
+#define MSG_MAX_LEN 100
 
 class User {
   public:

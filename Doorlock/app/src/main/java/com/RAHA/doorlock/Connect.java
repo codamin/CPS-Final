@@ -51,7 +51,8 @@ public class Connect
                 Log.d("Connect", bt.getName());
                 System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>");
                 System.out.println(bt.getName());
-                if (bt.getName().equals("AMIN")) {
+                if (bt.getName().equals("DESKTOP-254608Q")) {
+//                if (bt.getName().equals("AMIN")) {
                     return bt.getAddress();
                 }
 //                list.add(bt.getName() + "\n" + bt.getAddress()); //Get the device's name and the address

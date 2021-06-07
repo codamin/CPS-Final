@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
 //                byte[] message = Security.mergeByteString(myAddress+ "#", Security.run("lock#"+myAddress));
 ////                myBtSocket.getOutputStream().write(toSend.getBytes());
 //                myBtSocket.getOutputStream().write(Security.AddNewline(message));
-            myBtSocket.getOutputStream().write(("lock#" + myAddress + "\n").getBytes());
+            myBtSocket.getOutputStream().write(("lock#" + myAddress + "\r").getBytes());
 
                 Log.d("Main", "Trying sending On");
             }
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
 //                    Log.i("myactivity", String.format("0x%20x", b));
 //                }
 //                myBtSocket.getOutputStream().write(Security.AddNewline(message));
-                myBtSocket.getOutputStream().write(("open#" + myAddress + "\n").getBytes());
+                myBtSocket.getOutputStream().write(("open#" + myAddress + "\r").getBytes());
             }
             catch (IOException e)
             {

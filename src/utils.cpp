@@ -4,6 +4,11 @@
 char* user_id = "02:00:00:00:00:00";
 char* pass = "1234567800000000";
 
+
+char input;
+char message[MSG_MAX_LEN];
+int msg_idx = 0;
+
 // User* users = new User[MAX_USERS_NUMBER];
 // User  = User("02:00:00:00:00:00", "1234567800000000");
 // char* user_id = "02:00:00:00:00:00";
@@ -19,7 +24,7 @@ char* pass = "1234567800000000";
 // mbedtls_aes_free( &aes );
 
 
-int users_size = 0; 
+int users_size = 0;
 
 void open(Servo motor) {
   motor.write(180);
@@ -126,22 +131,21 @@ String* split(String str , char c) {
 }
 
 String recv_cmd(Servo motor) {
-  String message;
   if(Serial.available()) {
-    // Serial.println("available");
-    message = Serial.readStringUntil('\n');
-    if(message.length() == 0) {
-      return "";
-    }
-    // }
-    // String* message_splitted = split(message, '@');
-    // String id = message_splitted[0];
-    // String cypher_text_string = message_splitted[1];
-    // Serial.println(id);
-    // Serial.println(cypher_text_string);
-    String* plain_text_splitted1 = authorize(message);
-    process_cmd(plain_text_splitted1, motor);  
-    return "";
+    input = Serial.read();
+    if(input == '\r') {
+        message[msg_idx]= '\0';
+        Serial.println(message);
+        String* plain_text_splitted1 = authorize(message);
+        process_cmd(plain_text_splitted1, motor);
+        msg_idx = 0;
+        for (int i = 0; i < MSG_MAX_LEN; ++i)
+          message[i] = 0;
+      }
+      else {
+        message[msg_idx]=input;
+        msg_idx++;
+      }
   }
 }
 
