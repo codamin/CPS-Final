@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
             }
             return null;
         }
+        
         @Override
         protected void onPostExecute(Void result) //after the doInBackground, it checks if everything went fine
         {
@@ -132,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
             progress.dismiss();
         }
     }
+
     private void msg(String s)
     {
         Toast.makeText(getApplicationContext(),s, Toast.LENGTH_LONG).show();
@@ -143,15 +145,9 @@ public class MainActivity extends AppCompatActivity {
         {
             try
             {
-//                String toSend = myAddress+"#"+Security.run("lock#"+myAddress) ;
-//                Log.d("Main", ">>>>>>>>>>>>>>>>>Lock__"+toSend);
-////                Log.d("Main", ">>>>>>>>>>>>>>>>>Lock_"+String.format("%x", new BigInteger(1, toSend.getBytes("UTF-8"))));
-//                byte[] message = Security.mergeByteString(myAddress+ "#", Security.run("lock#"+myAddress));
-////                myBtSocket.getOutputStream().write(toSend.getBytes());
-//                myBtSocket.getOutputStream().write(Security.AddNewline(message));
-            myBtSocket.getOutputStream().write(("lock#" + myAddress + "\r").getBytes());
-
-                Log.d("Main", "Trying sending On");
+                byte[] message = Security.mergeByteString(myAddress+"#", Security.run("open#"+myAddress+"#000000000"));
+                myBtSocket.getOutputStream().write(Security.AddNewline(message));
+                Log.d("Main", "Trying sending Lock");
             }
             catch (IOException e)
             {
@@ -166,10 +162,6 @@ public class MainActivity extends AppCompatActivity {
         {
             try
             {
-//                String toSend = myAddress+"#"+Security.run("open#"+myAddress);
-//                Log.d("Main", ">>>>>>>>>>>>>>>>>Open__"+toSend);
-//                Log.d("Main", ">>>>>>>>>>>>>>>>>Open_"+String.format("%x", new BigInteger(1, toSend.getBytes("UTF-8"))));
-////                myBtSocket.getOutputStream().write(toSend.getBytes());
                 byte[] message = Security.mergeByteString(myAddress+"#", Security.run("open#"+myAddress+"#000000000"));
                 byte[] tmpf = Security.run("open#"+myAddress+ "#000000000");
 
@@ -180,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 myBtSocket.getOutputStream().write(Security.AddNewline(message));
 //                myBtSocket.getOutputStream().write(("open#" + myAddress + "\r").getBytes());
+                Log.d("Main", "Trying sending Open");
             }
             catch (IOException e)
             {
