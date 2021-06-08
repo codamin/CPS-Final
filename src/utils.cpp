@@ -41,6 +41,10 @@ String* authorize(String id, String cypher) {
   //     Serial.println("user not found");
   //     return NULL;
   // }
+  Serial.println("id");
+  Serial.println(id);
+  Serial.println("cypher");
+  Serial.println(cypher);
   char* cypher_cstr = string2ptr(cypher);
   aes128_dec_multiple((uint8_t *)pass, cypher_cstr, 32);
   String plain_text = String(cypher_cstr);
@@ -54,14 +58,14 @@ String* authorize(String id, String cypher) {
   Serial.println(plain_text_splitted[0]);
   Serial.println("ID");
   Serial.println(plain_text_splitted[1]);
-  // if(plain_text_splitted[1] != user_id) {
-  //     Serial.println("user not allowed");
-  //     return NULL;
-  // }
-  // else {
-  //     Serial.println("Success!");
-  //     return plain_text_splitted;
-  // }
+  if(plain_text_splitted[1] != user_id) {
+      Serial.println("user not allowed");
+      return NULL;
+  }
+  else {
+      Serial.println("Success!");
+      return plain_text_splitted;
+  }
 }
 
 // User addUser(String id, String password) {
@@ -138,8 +142,10 @@ void recv_cmd(Servo motor) {
         String id = splitted_message[0];
         String cypher = splitted_message[1];
 
-        String* plain_text_splitted1 = authorize(id, cypher);
-        process_cmd(plain_text_splitted1, motor);  
+        String* plain_text_splitted = authorize(id, cypher);
+        if (plain_text_splitted) {
+          process_cmd(plain_text_splitted, motor);  
+        }
         msg_idx = 0;
         for (int i = 0; i < MSG_MAX_LEN; ++i)
           message[i] = 0;
