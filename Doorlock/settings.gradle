@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':biometric-auth'
 rootProject.name = "Doorlock"
