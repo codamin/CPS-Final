@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
 
         Button btnOn = (Button) findViewById(R.id.button_on);
         Button btnOff = (Button) findViewById(R.id.button_off);
+        Button addUser = (Button) findViewById(R.id.button_add_user);
 
         new ConnectBT().execute();
 
@@ -70,18 +71,26 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
                     offButtonSelect = true;
 //                    closeLock();
                 }
-                mBiometricManager = new BiometricManager.BiometricBuilder(MainActivity.this)
-                        .setTitle(getString(R.string.biometric_title))
-                        .setSubtitle(getString(R.string.biometric_subtitle))
-                        .setDescription(getString(R.string.biometric_description))
-                        .setNegativeButtonText(getString(R.string.biometric_negative_button_text))
-                        .build();
-                mBiometricManager.authenticate(MainActivity.this);
+                if (v == addUser) {
+                    Intent addUserIntent = new Intent(MainActivity.this,
+                            AddUser.class);
+                    startActivity(addUserIntent);
+                }
+                if ( v == btnOn || v == btnOff) {
+                    mBiometricManager = new BiometricManager.BiometricBuilder(MainActivity.this)
+                            .setTitle(getString(R.string.biometric_title))
+                            .setSubtitle(getString(R.string.biometric_subtitle))
+                            .setDescription(getString(R.string.biometric_description))
+                            .setNegativeButtonText(getString(R.string.biometric_negative_button_text))
+                            .build();
+                    mBiometricManager.authenticate(MainActivity.this);
+                }
             }
         };
 
         btnOn.setOnClickListener(handler);
         btnOff.setOnClickListener(handler);
+        addUser.setOnClickListener(handler);
     }
 
     private class ConnectBT extends AsyncTask<Void, Void, Void>  // UI thread
