@@ -15,9 +15,9 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 public class Security {
-    public static byte[] run(String message) {
+    public static byte[] run(String message, String password) {
         try {
-            SecretKey secret = generateKey();
+            SecretKey secret = generateKey(password);
             return encryptMsg(message, secret);
         } catch (InvalidKeySpecException e) {
             e.printStackTrace();
@@ -39,12 +39,13 @@ public class Security {
         return null;
     }
 
-    public static SecretKey generateKey()
+    public static SecretKey generateKey(String password)
             throws NoSuchAlgorithmException, InvalidKeySpecException
     {
-        String password = "1234567800000000";
+//        String password2 = "1234567800000000";
+        String password2 = pass16(password);
         SecretKeySpec secret;
-        return secret = new SecretKeySpec(password.getBytes(), "AES");
+        return secret = new SecretKeySpec(password2.getBytes(), "AES");
     }
 
     public static byte[] encryptMsg(String message, SecretKey secret)
@@ -85,5 +86,16 @@ public class Security {
         System.arraycopy(data, 0, ans, 0, data.length);
         System.arraycopy(strd, 0, ans, data.length, strd.length);
         return ans;
+    }
+
+    private static String pass16(String pass) {
+        if(pass.length() == 16)
+            return pass;
+        else if(pass.length() > 16)
+            return pass.substring(0, 16);
+        else
+            while(pass.length()<16)
+                pass = pass + "0";
+            return pass;
     }
 }

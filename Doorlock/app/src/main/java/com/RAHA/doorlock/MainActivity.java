@@ -44,18 +44,16 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("Main", ">>>>>>>>>>>>>>>>>>>>>>>> hell");
-        SharedPreferences userInfo = getApplicationContext().getSharedPreferences("DoorLockInfo", MODE_PRIVATE);
+        userInfo = getApplicationContext().getSharedPreferences("DoorLockInfo", MODE_PRIVATE);
         userInfoEditor = userInfo.edit();
-        Log.d("Main", ">>>>>>>>>>>>>>>>>>>>>>>>>>> gener");
+        Log.d("Main", ">>>>>>>>>>>>>>> shit created");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        
-        Log.d("Main", "To Connect");
+
         Connect myConnect = new Connect();
         address = myConnect.pairedDevicesList();
-        Log.d("Main", ">>>>>>>"+address);
 
         Button btnOn = (Button) findViewById(R.id.button_on);
         Button btnOff = (Button) findViewById(R.id.button_off);
@@ -65,30 +63,25 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
 
         View.OnClickListener handler = new View.OnClickListener() {
             public void onClick(View v) {
-                Log.d("Main", ">>>>>>>>>Handler Ran");
                 if (!userInfo.contains("username") | !userInfo.contains("password")) {
-                    Log.d("Main", "s>>>>>>>>>>>>> shared Pref empty");
-
                     Intent addUserIntent = new Intent(MainActivity.this,
                             AddUser.class);
                     startActivityForResult(addUserIntent, 2);
                 }
                 else if (v == btnOn) {
-                    Log.d("Main", ">>>>>>>>>>>>>ONON");
                     onButtonSelect = true;
                     offButtonSelect = false;
                 }
                 else if (v == btnOff) {
-                    Log.d("Main", ">>>>>>>>>>>>>>>>OFFOFF");
                     onButtonSelect = false;
                     offButtonSelect = true;
                 }
                 else if (v == addUser) {
                     Intent addUserIntent = new Intent(MainActivity.this,
                             AddUser.class);
-                    int requestCode = 1;
-                    startActivityForResult(addUserIntent, requestCode);
+                    startActivityForResult(addUserIntent, 1);
                 }
+
                 if ((userInfo.contains("username") & userInfo.contains("password")) & (v == btnOn || v == btnOff || v == addUser)) {
                     mBiometricManager = new BiometricManager.BiometricBuilder(MainActivity.this)
                             .setTitle(getString(R.string.biometric_title))
@@ -109,13 +102,12 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == 1) {
             if(resultCode == Activity.RESULT_OK){
                 String username = data.getStringExtra("username");
                 String password = data.getStringExtra("password");
-                Log.d("Main", ">>>>>>>>>>>>>>> username"+username);
-                Log.d("Main", ">>>>>>>>>>>>>> password"+password);
+                Log.d("Main", ">>>>>>>>>>>>>>> usernameــ"+username);
+                Log.d("Main", ">>>>>>>>>>>>>> passwordــ"+password);
                 sendAddUser(username, password);
             }
         }
@@ -130,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
                 userInfoEditor.apply();
             }
         }
-    } //onActivityResult
+    }
 
     private class ConnectBT extends AsyncTask<Void, Void, Void>  // UI thread
     {
@@ -149,48 +141,29 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
             {
                 if (myBtSocket == null || !isBtConnected)
                 {
-                    Log.d("Main", ">>>>>>>>>>>>>>one");
-                    myBluetooth = BluetoothAdapter.getDefaultAdapter();//get the mobile bluetooth device
-                    Log.d("Main", ">>>>>>>>>>>>>>two");
+                    myBluetooth = BluetoothAdapter.getDefaultAdapter();
                     myAddress = myBluetooth.getAddress();
-//                    String toSend = myAddress+"@"+Security.run("lock#"+myAddress);
-//                    Log.d("Main", ">>>>>>>>>"+toSend);
-                    Log.d("Main", ">>>>>>>>>>>>>>three");
-                    Log.d("Main", ">>>>>>>>>>>my"+myAddress);
-                    BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(address);//connects to the device's address and checks if it's available
-                    Log.d("Main", ">>>>>>>>>>>>>>four");
-                    myBtSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID);//create a RFCOMM (SPP) connection
-//                    myBtSocket = dispositivo.createRfcommSocketToServiceRecord(myUUID);//create a RFCOMM (SPP) connection
-
-                    Log.d("Main", ">>>>>>>>>>>>>>five");
+                    BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(address);
+                    myBtSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID);
                     BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
-                    Log.d("Main", ">>>>>>>>>>>>>>six");
                     myBtSocket.connect();//start connection
-                    Log.d("Main", ">>>>>>>>>>>>>>seven");
-                    Log.d("Main", ">>>>>>>>>>Device Connected");
                 }
             }
             catch (IOException e)
             {
-                ConnectSuccess = false;//if the try failed, you can check the exception here
-                Log.e("Main", "I got an error", e);
-                Log.d("Main", ">>>>>>>>>>>>>Device couldn't Connect");
+                ConnectSuccess = false;
             }
             return null;
         }
         
         @Override
-        protected void onPostExecute(Void result) //after the doInBackground, it checks if everything went fine
-        {
+        protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-
-            if (!ConnectSuccess)
-            {
+            if (!ConnectSuccess) {
                 msg("Connection Failed. Is it a SPP Bluetooth? Try again.");
                 finish();
             }
-            else
-            {
+            else {
                 msg("Connected.");
                 isBtConnected = true;
             }
@@ -198,64 +171,51 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
         }
     }
 
-    private void msg(String s)
-    {
+    private void msg(String s) {
         Toast.makeText(getApplicationContext(),s, Toast.LENGTH_LONG).show();
     }
 
     private void closeLock()
     {
-        if (myBtSocket != null)
-        {
-            try
-            {
-                byte[] message = Security.mergeByteString(myAddress+"#", Security.run("open#"+myAddress+"#000000000"));
+        String userName = userInfo.getString("username", "nu");
+        String userPass = userInfo.getString("password", "ll");
+        if (myBtSocket != null) {
+            try {
+                byte[] message = Security.mergeByteString(myAddress+"#", Security.run("open#"+userName+"#0000000000000000", userPass));
                 myBtSocket.getOutputStream().write(Security.AddNewline(message));
-                Log.d("Main", "Trying sending Lock");
-            }
-            catch (IOException e)
-            {
-                msg("Error");
-            }
+            } catch (IOException e) { msg("Error"); }
         }
     }
 
     private void openLock()
     {
-        if (myBtSocket!=null)
-        {
-            try
-            {
-                byte[] message = Security.mergeByteString(myAddress+"#", Security.run("open#"+myAddress+"#000000000"));
-                byte[] tmpf = Security.run("open#"+myAddress+ "#000000000");
-
-                int i = 0;
-                for (byte b: tmpf){
-                    Log.i("myactivity", String.format("0x%20x", b)+ "--" + String.valueOf(i));
-                    i += 1;
-                }
+        String userName = userInfo.getString("username", "");
+        String userPass = userInfo.getString("password", "");
+        if (myBtSocket!=null) {
+            try {
+                byte[] message = Security.mergeByteString(myAddress+"#", Security.run("open#"+userName+"#0000000000000000", userPass));
+//                byte[] tmpf = Security.run("open#"+myAddress+ "#0000000000000000");
+//                int i = 0;
+//                for (byte b: tmpf){
+//                    Log.i("myactivity", String.format("0x%20x", b)+ "--" + String.valueOf(i));
+//                    i += 1;
+//                }
                 myBtSocket.getOutputStream().write(Security.AddNewline(message));
-//                myBtSocket.getOutputStream().write(("open#" + myAddress + "\r").getBytes());
                 Log.d("Main", "Trying sending Open");
             }
-            catch (IOException e)
-            {
-                msg("Error");
-            }
+            catch (IOException e) { msg("Error"); }
         }
     }
 
     public void sendAddUser(String username, String password) {
+        String userName = userInfo.getString("username", "");
+        String userPass = userInfo.getString("password", "");
         if (myBtSocket != null) {
             try {
-                byte[] message = Security.mergeByteString(username+"#", Security.run("add#"+username+"#"+password+"#0000000000000000"));
+                byte[] message = Security.mergeByteString(userName+"#", Security.run("add#"+username+"#"+password+"#0000000000000000", userPass));
                 myBtSocket.getOutputStream().write(Security.AddNewline(message));
-                Log.d("Main", ">>>>>>> add user command sent");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            } catch (IOException e) { e.printStackTrace(); }
         }
-
     }
 
     @Override
