@@ -2,6 +2,7 @@ package com.RAHA.doorlock;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -74,9 +75,10 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
                 if (v == addUser) {
                     Intent addUserIntent = new Intent(MainActivity.this,
                             AddUser.class);
-                    startActivity(addUserIntent);
+                    int requestCode = 1;
+                    startActivityForResult(addUserIntent, requestCode);
                 }
-                if ( v == btnOn || v == btnOff) {
+                if ( v == btnOn || v == btnOff || v == addUser) {
                     mBiometricManager = new BiometricManager.BiometricBuilder(MainActivity.this)
                             .setTitle(getString(R.string.biometric_title))
                             .setSubtitle(getString(R.string.biometric_subtitle))
@@ -92,6 +94,24 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
         btnOff.setOnClickListener(handler);
         addUser.setOnClickListener(handler);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1) {
+            if(resultCode == Activity.RESULT_OK){
+                String username = data.getStringExtra("username");
+                String password = data.getStringExtra("password");
+                Log.d("Main", ">>>>>>>>>>>>>>> username"+username);
+                Log.d("Main", ">>>>>>>>>>>>>> password"+password);
+                sendAddUser(username, password);
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                // Write your code if there's no result
+            }
+        }
+    } //onActivityResult
 
     private class ConnectBT extends AsyncTask<Void, Void, Void>  // UI thread
     {
@@ -204,6 +224,19 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
                 msg("Error");
             }
         }
+    }
+
+    public void sendAddUser(String username, String password) {
+        if (myBtSocket != null) {
+            try {
+                byte[] message = Security.mergeByteString(username+"#", Security.run("add#"+username+"#"+password+"#0000000000000000"));
+                myBtSocket.getOutputStream().write(Security.AddNewline(message));
+                Log.d("Main", ">>>>>>> add user command sent");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @Override

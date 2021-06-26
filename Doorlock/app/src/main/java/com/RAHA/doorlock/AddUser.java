@@ -1,5 +1,7 @@
 package com.RAHA.doorlock;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -32,6 +34,13 @@ public class AddUser extends AppCompatActivity {
                 if(passwordString.length() <= 0)
                     Toast.makeText(AddUser.this, "Please enter password", Toast.LENGTH_SHORT).show();
                 System.out.println(String.format("mac : %s, password : %s", macAddressString, passwordString));
+                if(macAddressString.length() > 0 & passwordString.length() > 0) {
+                    Intent intent = new Intent();
+                    intent.putExtra("username", macAddressString);
+                    intent.putExtra("password", passwordString);
+                    setResult(Activity.RESULT_OK, intent);
+                    finish();
+                }
             }
         });
 
