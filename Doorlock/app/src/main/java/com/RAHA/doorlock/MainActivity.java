@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -38,14 +39,19 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
     boolean onButtonSelect = false;
     boolean offButtonSelect = false;
 
+    SharedPreferences userInfo = null;
+    SharedPreferences.Editor userInfoEditor = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("Main", ">>>>>>>>>>>>>>>>>>>>>>>> hell");
+        SharedPreferences userInfo = getApplicationContext().getSharedPreferences("DoorLockInfo", MODE_PRIVATE);
+        userInfoEditor = userInfo.edit();
+        Log.d("Main", ">>>>>>>>>>>>>>>>>>>>>>>>>>> gener");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-//        Intent newint = getIntent();
-//        address = newint.getStringExtra(DeviceList.EXTRA_ADDRESS); //receive the address of the bluetooth device
+        
         Log.d("Main", "To Connect");
         Connect myConnect = new Connect();
         address = myConnect.pairedDevicesList();
@@ -60,25 +66,30 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
         View.OnClickListener handler = new View.OnClickListener() {
             public void onClick(View v) {
                 Log.d("Main", ">>>>>>>>>Handler Ran");
-                if (v == btnOn) {
+                if (!userInfo.contains("username") | !userInfo.contains("password")) {
+                    Log.d("Main", "s>>>>>>>>>>>>> shared Pref empty");
+
+                    Intent addUserIntent = new Intent(MainActivity.this,
+                            AddUser.class);
+                    startActivityForResult(addUserIntent, 2);
+                }
+                else if (v == btnOn) {
                     Log.d("Main", ">>>>>>>>>>>>>ONON");
                     onButtonSelect = true;
                     offButtonSelect = false;
-//                    openLock();
                 }
-                if (v == btnOff) {
+                else if (v == btnOff) {
                     Log.d("Main", ">>>>>>>>>>>>>>>>OFFOFF");
                     onButtonSelect = false;
                     offButtonSelect = true;
-//                    closeLock();
                 }
-                if (v == addUser) {
+                else if (v == addUser) {
                     Intent addUserIntent = new Intent(MainActivity.this,
                             AddUser.class);
                     int requestCode = 1;
                     startActivityForResult(addUserIntent, requestCode);
                 }
-                if ( v == btnOn || v == btnOff || v == addUser) {
+                if ((userInfo.contains("username") & userInfo.contains("password")) & (v == btnOn || v == btnOff || v == addUser)) {
                     mBiometricManager = new BiometricManager.BiometricBuilder(MainActivity.this)
                             .setTitle(getString(R.string.biometric_title))
                             .setSubtitle(getString(R.string.biometric_subtitle))
@@ -107,8 +118,16 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
                 Log.d("Main", ">>>>>>>>>>>>>> password"+password);
                 sendAddUser(username, password);
             }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                // Write your code if there's no result
+        }
+        else if(requestCode == 2) {
+            if(resultCode == Activity.RESULT_OK){
+                String username = data.getStringExtra("username");
+                String password = data.getStringExtra("password");
+                Log.d("Main", ">>>>>>>>>>>>>>> for unlock username"+username);
+                Log.d("Main", ">>>>>>>>>>>>>>> for unlock password"+password);
+                userInfoEditor.putString("username", username);
+                userInfoEditor.putString("password", password);
+                userInfoEditor.apply();
             }
         }
     } //onActivityResult
