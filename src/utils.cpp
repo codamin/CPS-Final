@@ -42,8 +42,12 @@ String* authorize(String id, String cypher) {
   String* plain_text_splitted = new String[MAX_SPLIT_SIZE];
   plain_text_splitted = split(plain_text, '#');
   
-  Serial.println("fuck");
+  Serial.println("fuck<><><>");
+  Serial.println(id);
+  Serial.println(plain_text_splitted[0]);
   Serial.println(plain_text_splitted[1]);
+  Serial.println(plain_text_splitted[2]);
+  Serial.println(plain_text_splitted[3]);
   if(plain_text_splitted[1] != id) {
       Serial.println("Wrong Password: user not authorized");
       return NULL;
@@ -121,35 +125,52 @@ String* split(String str , char c) {
   return splitted;
 }
 
+char prev = NULL;
+int read_step = 0;
+
 void recv_cmd(Servo motor) {
   if(Serial.available()) {
-    input = Serial.read(); 
+    input = Serial.read();
+    Serial.println(input);
     if(input == '\r') {
-        message[msg_idx]= '\0';
-        // Serial.println(message);
+      read_step += 1;
+    }
+    else {
+      read_step = 0;
+    }
+    Serial.println(read_step);
+
+    // prev = input;
+
+    if(read_step == 15) {
+        // prev = NULL;
+        read_step = 0;
+        Serial.println(">>>><<<<<>>><");
+        Serial.println(msg_idx);
+        message[msg_idx-14]='\0';
+        // Serial.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        Serial.println(message);
+        return;
+        // Serial.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
         String* splitted_message = split(message, '#');
         String id = splitted_message[0];
         String cypher = splitted_message[1];
-        Serial.println("<<<<<<<<<<<<<<<");
-        Serial.println(id);
-        Serial.println(cypher);
 
         String* plain_text_splitted = authorize(id, cypher);
         if (plain_text_splitted) {
-          process_cmd(plain_text_splitted, motor, id);  
+          process_cmd(plain_text_splitted, motor, id);
         }
         msg_idx = 0;
         for (int i = 0; i < MSG_MAX_LEN; ++i)
           message[i] = 0;
       }
-      else {
-        message[msg_idx]=input;
-        msg_idx++;
-      }
+    else {
+      message[msg_idx]=input;
+      msg_idx++;
+    }
   }
 }
-
 void process_cmd(String* plain_text_splitted, Servo motor, String id) {
   if(plain_text_splitted[0] == "open") {
     Serial.println("unlocking");
@@ -165,7 +186,9 @@ void process_cmd(String* plain_text_splitted, Servo motor, String id) {
       return;
     }
     Serial.println("adding user");
-    addUser(plain_text_splitted[1], plain_text_splitted[2]);
+    Serial.println(plain_text_splitted[2]);
+    Serial.println(plain_text_splitted[3]);
+    addUser(plain_text_splitted[2], plain_text_splitted[3]);
   }
   if(plain_text_splitted[0] == "remove") {
     if(id != admin_user.id) {

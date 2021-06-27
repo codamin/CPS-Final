@@ -21,6 +21,7 @@ public class Security {
         try {
             SecretKey secret = generateKey(password);
             String messageC = message16(message);
+            Log.d("Security", ">>>>>>>>>>>> " + password);
             Log.d("Security", ">>>>>>>>>>>>> "+messageC);
 
             return encryptMsg(messageC, secret);
@@ -86,8 +87,11 @@ public class Security {
     }
 
     public static byte[] AddNewline(byte[] data) {
-        byte[] strd = "\r".getBytes();
+        byte[] strd = "\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r".getBytes();
         byte[] ans = new byte[strd.length + data.length];
+        Log.d("Security", ">>>>>>>>>>>>> len data");
+        Log.d("sec",    String.valueOf(data.length));
+        Log.d("sec", String.valueOf(strd.length));
         System.arraycopy(data, 0, ans, 0, data.length);
         System.arraycopy(strd, 0, ans, data.length, strd.length);
         return ans;
