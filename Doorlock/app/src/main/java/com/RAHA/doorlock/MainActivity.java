@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
         String userPass = userInfo.getString("password", "ll");
         if (myBtSocket != null) {
             try {
-                byte[] message = Security.mergeByteString(myAddress+"#", Security.run("open#"+userName+"#0000000000000000", userPass));
+                byte[] message = Security.mergeByteString(userName+"#", Security.run("open#"+userName+"#0000000000000000", userPass));
                 myBtSocket.getOutputStream().write(Security.AddNewline(message));
             } catch (IOException e) { msg("Error"); }
         }
@@ -193,13 +193,19 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
         String userPass = userInfo.getString("password", "");
         if (myBtSocket!=null) {
             try {
-                byte[] message = Security.mergeByteString(myAddress+"#", Security.run("open#"+userName+"#0000000000000000", userPass));
-//                byte[] tmpf = Security.run("open#"+myAddress+ "#0000000000000000");
-//                int i = 0;
-//                for (byte b: tmpf){
-//                    Log.i("myactivity", String.format("0x%20x", b)+ "--" + String.valueOf(i));
-//                    i += 1;
-//                }
+                byte[] message = Security.mergeByteString(userName+"#", Security.run("open#"+userName, userPass));
+                Log.d("Main", ">>>> encrypting text >> "+"open#"+userName);
+                Log.d("Main", ">>>>>>>>>>>> "+ new String(message));
+                byte[] tmpf = Security.run("open#"+userName, userPass);
+                int i = 0;
+                for (byte b: tmpf){
+                    Log.i("myactivity", String.format("0x%20x", b)+ "--" + String.valueOf(i));
+                    i += 1;
+                }
+                Log.d("Main", ">>>>>>>>>>>>>>>>>>>>>>> " + userName + " -- " + userPass);
+//                myBtSocket.getOutputStream().write((userName+"#").getBytes());
+//                myBtSocket.getOutputStream().write(Security.AddNewline(Security.run("open#", userPass)));
+//                myBtSocket.getOutputStream().write(Security.AddNewline(message));
                 myBtSocket.getOutputStream().write(Security.AddNewline(message));
                 Log.d("Main", "Trying sending Open");
             }

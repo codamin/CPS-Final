@@ -1,5 +1,7 @@
 package com.RAHA.doorlock;
 
+import android.util.Log;
+
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -18,7 +20,10 @@ public class Security {
     public static byte[] run(String message, String password) {
         try {
             SecretKey secret = generateKey(password);
-            return encryptMsg(message, secret);
+            String messageC = message16(message);
+            Log.d("Security", ">>>>>>>>>>>>> "+messageC);
+
+            return encryptMsg(messageC, secret);
         } catch (InvalidKeySpecException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
@@ -97,5 +102,14 @@ public class Security {
             while(pass.length()<16)
                 pass = pass + "0";
             return pass;
+    }
+    private static String message16(String message) {
+        String message2 = message + "#";
+        if(message2.length() % 16 == 0)
+            return message2;
+        else
+            while(message2.length() % 16 != 0)
+                message2 = message2 + "0";
+            return message2;
     }
 }

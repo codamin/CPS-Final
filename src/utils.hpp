@@ -28,8 +28,8 @@ class User {
 };
 
 String* authorize(String id, String cypher);
-// User addUser(String id, String password);
-// void removeUser(String id);
+User addUser(String id, String password);
+void removeUser(String id);
 char* getPassword(String id);
 void processCommand(String cmd);
 char* string2ptr(String str);
@@ -38,7 +38,7 @@ String* split(String str , char c);
 void recv_cmd(Servo motor);
 void lock(Servo motor);
 void open(Servo motor);
-void process_cmd(String* plain_text_splitted, Servo motor);
-
+void process_cmd(String* plain_text_splitted, Servo motor, String id);
+void set_admin(String id, String password);
 
 #endif

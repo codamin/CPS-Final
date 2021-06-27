@@ -1,28 +1,12 @@
 #include <utils.hpp>
 
-
-char* user_id = "02:00:00:00:00:00";
-char* pass = "1234567800000000";
-
 char input;
 char message[MSG_MAX_LEN];
 int msg_idx = 0;
-// User* users = new User[MAX_USERS_NUMBER];
-// User  = User("02:00:00:00:00:00", "1234567800000000");
-// char* user_id = "02:00:00:00:00:00";
-// char* pass = "1234567800000000";
-// unsigned char output[16];
-// char *input = "Tech tutorials x";
-
-// mbedtls_aes_context aes;
-// mbedtls_aes_init( &aes );
-// mbedtls_aes_setkey_enc( &aes, (const unsigned char*) key, strlen(key) * 8 );
-
-// mbedtls_aes_crypt_ecb(&aes, MBEDTLS_AES_DECRYPT, (const unsigned char*)input, output);
-// mbedtls_aes_free( &aes );
-
 
 int users_size = 0; 
+User users[MAX_USERS_NUMBER];
+User admin_user;
 
 void open(Servo motor) {
   motor.write(180);
@@ -35,63 +19,69 @@ void lock(Servo motor) {
   }
 }
 
+void set_admin(String id, String password) {
+  admin_user = User(id, password);
+}
 
 String* authorize(String id, String cypher) {
-  // if(!password) {
-  //     Serial.println("user not found");
-  //     return NULL;
-  // }
-  Serial.println("id");
-  Serial.println(id);
-  Serial.println("cypher");
-  Serial.println(cypher);
+  char* password = getPassword(id);
+  if(!password) {
+      Serial.println("user with this id not found");
+      return NULL;
+  }
   char* cypher_cstr = string2ptr(cypher);
-  aes128_dec_multiple((uint8_t *)pass, cypher_cstr, 32);
+  Serial.println(cypher_cstr);
+  Serial.println(strlen(cypher_cstr));
+  aes128_dec_multiple((uint8_t *)password, cypher_cstr, strlen(cypher_cstr));
   String plain_text = String(cypher_cstr);
+  Serial.println(">>>>>");
+  Serial.println(plain_text);
 
   delete[] cypher_cstr;
 
   String* plain_text_splitted = new String[MAX_SPLIT_SIZE];
   plain_text_splitted = split(plain_text, '#');
   
-  Serial.println("CMD");
-  Serial.println(plain_text_splitted[0]);
-  Serial.println("ID");
+  Serial.println("fuck");
   Serial.println(plain_text_splitted[1]);
-  if(plain_text_splitted[1] != user_id) {
-      Serial.println("user not allowed");
+  if(plain_text_splitted[1] != id) {
+      Serial.println("Wrong Password: user not authorized");
       return NULL;
   }
   else {
-      Serial.println("Success!");
+      Serial.println("Correct Password : user authorized");
       return plain_text_splitted;
   }
 }
 
-// User addUser(String id, String password) {
-//   User newUser = User(id, password);
-//   users[users_size] = newUser;
-//   users_size ++;
-//   return newUser;
-// }
+User addUser(String id, String password) {
+  User newUser = User(id, password);
+  users[users_size] = newUser;
+  users_size ++;
+  Serial.print("added user with id: ");
+  Serial.println(id);
+  return newUser;
+}
 
-// void removeUser(String id) {
-//   for(int i=0; i < users_size; i++) {
-//     if(users[i].id == id) {
-//       users[i] = User();
-//     }
-//   }
-//   users_size --;
-// }
+void removeUser(String id) {
+  for(int i=0; i < users_size; i++) {
+    if(users[i].id == id) {
+      users[i] = User();
+    }
+  }
+  users_size --;
+  Serial.print("removed user with id: ");
+  Serial.println(id);
+}
 
-// char* getPassword(String id) {
-//   for(int i=0; i < users_size; i++) {
-//     if(users[i].id == id) {
-//       return(users[i].password.c_str());
-//     }
-//   }
-//   return NULL;
-// }
+char* getPassword(String id) {
+  for(int i=0; i < users_size; i++) {
+    if(users[i].id == id) {
+      return(users[i].password.c_str());
+    }
+  }
+  return NULL;
+}
 
 char* string2ptr(String str) {
     char* writable = new char[str.length() + 1];
@@ -136,15 +126,18 @@ void recv_cmd(Servo motor) {
     input = Serial.read(); 
     if(input == '\r') {
         message[msg_idx]= '\0';
-        Serial.println(message);
+        // Serial.println(message);
 
         String* splitted_message = split(message, '#');
         String id = splitted_message[0];
         String cypher = splitted_message[1];
+        Serial.println("<<<<<<<<<<<<<<<");
+        Serial.println(id);
+        Serial.println(cypher);
 
         String* plain_text_splitted = authorize(id, cypher);
         if (plain_text_splitted) {
-          process_cmd(plain_text_splitted, motor);  
+          process_cmd(plain_text_splitted, motor, id);  
         }
         msg_idx = 0;
         for (int i = 0; i < MSG_MAX_LEN; ++i)
@@ -157,22 +150,30 @@ void recv_cmd(Servo motor) {
   }
 }
 
-void process_cmd(String* plain_text_splitted, Servo motor) {
+void process_cmd(String* plain_text_splitted, Servo motor, String id) {
   if(plain_text_splitted[0] == "open") {
-  Serial.println("unlocking");
+    Serial.println("unlocking");
     open(motor);
   }
   if(plain_text_splitted[0] == "lock") {
     Serial.println("locking");
     lock(motor);
   }
-  // if(plain_text_splitted[0] == "add") {
-  //   Serial.println("adding user");
-  //   // addUser(plain_text_splitted[1], plain_text_splitted[2]);
-  // }
-  // if(plain_text_splitted[0] == "remove") {
-  //   Serial.println("removing user");
-  //   // removeUser(plain_text_splitted[1]);
-  // }
+  if(plain_text_splitted[0] == "add") {
+    if(id != admin_user.id) {
+      Serial.println("Error : user is not admin");
+      return;
+    }
+    Serial.println("adding user");
+    addUser(plain_text_splitted[1], plain_text_splitted[2]);
+  }
+  if(plain_text_splitted[0] == "remove") {
+    if(id != admin_user.id) {
+      Serial.println("Error : user is not admin");
+      return;
+    }
+    Serial.println("removing user");
+    removeUser(plain_text_splitted[1]);
+  }
   delete[] plain_text_splitted;
 }
