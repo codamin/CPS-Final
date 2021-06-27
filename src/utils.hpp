@@ -7,7 +7,7 @@
 
 typedef unsigned char BYTE;
 
-#define MAX_SPLIT_SIZE 3
+#define MAX_SPLIT_SIZE 4
 #define MAX_USERS_NUMBER 10
 #define MOTOR_PIN 8
 #define SERVO_OPEN_POSITION 0

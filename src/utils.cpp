@@ -30,11 +30,13 @@ String* authorize(String id, String cypher) {
       return NULL;
   }
   char* cypher_cstr = string2ptr(cypher);
+  Serial.print("cypher_cstr=");
   Serial.println(cypher_cstr);
+  Serial.print("length of cypher_cstr=");
   Serial.println(strlen(cypher_cstr));
   aes128_dec_multiple((uint8_t *)password, cypher_cstr, strlen(cypher_cstr));
   String plain_text = String(cypher_cstr);
-  Serial.println(">>>>>");
+  Serial.print("plain_text=");
   Serial.println(plain_text);
 
   delete[] cypher_cstr;
@@ -42,12 +44,11 @@ String* authorize(String id, String cypher) {
   String* plain_text_splitted = new String[MAX_SPLIT_SIZE];
   plain_text_splitted = split(plain_text, '#');
   
-  Serial.println("fuck<><><>");
   Serial.println(id);
   Serial.println(plain_text_splitted[0]);
   Serial.println(plain_text_splitted[1]);
   Serial.println(plain_text_splitted[2]);
-  Serial.println(plain_text_splitted[3]);
+  // Serial.println(plain_text_splitted[3]);
   if(plain_text_splitted[1] != id) {
       Serial.println("Wrong Password: user not authorized");
       return NULL;
@@ -132,7 +133,7 @@ void recv_cmd(Servo motor) {
   if(Serial.available()) {
     input = Serial.read();
     Serial.println(input);
-    if(input == '\r') {
+    if(input == '>') {
       read_step += 1;
     }
     else {
@@ -140,18 +141,12 @@ void recv_cmd(Servo motor) {
     }
     Serial.println(read_step);
 
-    // prev = input;
-
-    if(read_step == 15) {
-        // prev = NULL;
+    if(read_step == 16) {
+      Serial.println("tamoom shod");
         read_step = 0;
-        Serial.println(">>>><<<<<>>><");
         Serial.println(msg_idx);
-        message[msg_idx-14]='\0';
-        // Serial.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        message[msg_idx-16+1]='\0';
         Serial.println(message);
-        return;
-        // Serial.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
         String* splitted_message = split(message, '#');
         String id = splitted_message[0];

@@ -87,7 +87,7 @@ public class Security {
     }
 
     public static byte[] AddNewline(byte[] data) {
-        byte[] strd = "\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r".getBytes();
+        byte[] strd = ">>>>>>>>>>>>>>>>".getBytes();
         byte[] ans = new byte[strd.length + data.length];
         Log.d("Security", ">>>>>>>>>>>>> len data");
         Log.d("sec",    String.valueOf(data.length));
