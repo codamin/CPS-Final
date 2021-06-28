@@ -3,6 +3,7 @@ package com.RAHA.doorlock;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,6 +39,8 @@ public class AddUser extends AppCompatActivity {
                     Intent intent = new Intent();
                     intent.putExtra("username", macAddressString);
                     intent.putExtra("password", passwordString);
+                    Log.d("AddUser", ">>>>>>>>>>>>>>>>>>username " + macAddressString);
+                    Log.d("AddUser", ">>>>>>>>>>>>>>>>>>password " + passwordString);
                     setResult(Activity.RESULT_OK, intent);
                     finish();
                 }

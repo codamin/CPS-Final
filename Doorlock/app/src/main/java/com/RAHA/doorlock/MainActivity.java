@@ -66,12 +66,12 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
 
         View.OnClickListener handler = new View.OnClickListener() {
             public void onClick(View v) {
-//                if (!userInfo.contains("username") | !userInfo.contains("password")) {
-//                    Intent addUserIntent = new Intent(MainActivity.this,
-//                            AddUser.class);
-//                    startActivityForResult(addUserIntent, 2); -> what is this??
-//                }
-//                else
+                if (!userInfo.contains("username") | !userInfo.contains("password")) {
+                    Intent addUserIntent = new Intent(MainActivity.this,
+                            AddUser.class);
+                    startActivityForResult(addUserIntent, 2);
+                }
+                else
                     if (v == btnOn) {
                     onButtonSelect = true;
                     offButtonSelect = false;
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
                     offButtonSelect = false;
                 }
 
-                if ((userInfo.contains("username") & userInfo.contains("password")) & (v == btnOn || v == btnOff || v == addUser)) {
+                if ((userInfo.contains("username") & userInfo.contains("password"))) {
                     mBiometricManager = new BiometricManager.BiometricBuilder(MainActivity.this)
                             .setTitle(getString(R.string.biometric_title))
                             .setSubtitle(getString(R.string.biometric_subtitle))
@@ -136,6 +136,13 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
                 userInfoEditor.putString("username", username);
                 userInfoEditor.putString("password", password);
                 userInfoEditor.apply();
+            }
+        }
+        else if(requestCode == 3) {
+            if(resultCode == Activity.RESULT_OK){
+                String username = data.getStringExtra("username");
+                Log.d("Main remove user", ">>>>>>>>>>>>>>> usernameــ"+username);
+                sendRemoveUser(username);
             }
         }
     }
@@ -239,6 +246,18 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
         }
     }
 
+    public void sendRemoveUser(String username) {
+        String userName = userInfo.getString("username", "");
+        String userPass = userInfo.getString("password", "");
+
+        if (myBtSocket != null) {
+            try {
+                byte[] message = Security.mergeByteString(userName+"#", Security.run("remove#"+userName+"#"+username, userPass));
+                myBtSocket.getOutputStream().write(Security.AddNewline(message));
+            } catch (IOException e) { e.printStackTrace(); }
+        }
+    }
+
     @Override
     public void onSdkVersionNotSupported() {
         Toast.makeText(getApplicationContext(), getString(R.string.biometric_error_sdk_not_supported), Toast.LENGTH_LONG).show();
@@ -285,12 +304,20 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
         else if(addUserSelect) {
             Intent addUserIntent = new Intent(MainActivity.this,
                     AddUser.class);
-            startActivity(addUserIntent);
+            startActivityForResult(addUserIntent, 1);
         }
         else if(removeUserSelect) {
+            Log.d("Main", ">>>>>>>>>>>>>>>> on auth remove user");
             Intent removeUserIntent = new Intent(MainActivity.this,
-                    RemoveUser.class);
+                    AddUser.class);
+            Log.d("Main", ">>>>>>>>>>>>>>>>> intnet remove user created");
+//            startActivityForResult(removeUserIntent, 3);
             startActivity(removeUserIntent);
+            Log.d("Main", ">>>>>>>>>>>>>>>>>>>>> shit");
+//            Intent addUserIntent = new Intent(MainActivity.this,
+//                    RemoveUser.class);
+//            startActivityForResult(addUserIntent, 3);
+
         }
     }
 
