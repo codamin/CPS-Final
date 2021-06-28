@@ -309,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
         else if(removeUserSelect) {
             Log.d("Main", ">>>>>>>>>>>>>>>> on auth remove user");
             Intent removeUserIntent = new Intent(MainActivity.this,
-                    AddUser.class);
+                    RemoveUser.class);
             Log.d("Main", ">>>>>>>>>>>>>>>>> intnet remove user created");
 //            startActivityForResult(removeUserIntent, 3);
             startActivity(removeUserIntent);

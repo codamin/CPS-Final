@@ -26,6 +26,9 @@
         <activity
             android:name=".AddUser"
             android:label="AddUser" />
+        <activity
+            android:name=".RemoveUser"
+            android:label="RemoveUser" />
     </application>
 
 </manifest>
