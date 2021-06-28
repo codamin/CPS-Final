@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
     BiometricManager mBiometricManager;
     boolean onButtonSelect = false;
     boolean offButtonSelect = false;
+    boolean addUserSelect = false;
+    boolean removeUserSelect = false;
 
     SharedPreferences userInfo = null;
     SharedPreferences.Editor userInfoEditor = null;
@@ -58,28 +60,41 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
         Button btnOn = (Button) findViewById(R.id.button_on);
         Button btnOff = (Button) findViewById(R.id.button_off);
         Button addUser = (Button) findViewById(R.id.button_add_user);
+        Button removeUser = (Button) findViewById(R.id.button_remove_user);
 
         new ConnectBT().execute();
 
         View.OnClickListener handler = new View.OnClickListener() {
             public void onClick(View v) {
-                if (!userInfo.contains("username") | !userInfo.contains("password")) {
-                    Intent addUserIntent = new Intent(MainActivity.this,
-                            AddUser.class);
-                    startActivityForResult(addUserIntent, 2);
-                }
-                else if (v == btnOn) {
+//                if (!userInfo.contains("username") | !userInfo.contains("password")) {
+//                    Intent addUserIntent = new Intent(MainActivity.this,
+//                            AddUser.class);
+//                    startActivityForResult(addUserIntent, 2); -> what is this??
+//                }
+//                else
+                    if (v == btnOn) {
                     onButtonSelect = true;
                     offButtonSelect = false;
+                    addUserSelect = false;
+                    removeUserSelect = false;
                 }
                 else if (v == btnOff) {
                     onButtonSelect = false;
                     offButtonSelect = true;
+                    addUserSelect = false;
+                    removeUserSelect = false;
                 }
                 else if (v == addUser) {
-                    Intent addUserIntent = new Intent(MainActivity.this,
-                            AddUser.class);
-                    startActivityForResult(addUserIntent, 1);
+                    addUserSelect = true;
+                    onButtonSelect = false;
+                    offButtonSelect = false;
+                    removeUserSelect = false;
+                }
+                else if (v == removeUser) {
+                    removeUserSelect = true;
+                    addUserSelect = false;
+                    onButtonSelect = false;
+                    offButtonSelect = false;
                 }
 
                 if ((userInfo.contains("username") & userInfo.contains("password")) & (v == btnOn || v == btnOff || v == addUser)) {
@@ -97,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
         btnOn.setOnClickListener(handler);
         btnOff.setOnClickListener(handler);
         addUser.setOnClickListener(handler);
+        removeUser.setOnClickListener(handler);
     }
 
     @Override
@@ -266,6 +282,16 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
             openLock();
         else if(offButtonSelect)
             closeLock();
+        else if(addUserSelect) {
+            Intent addUserIntent = new Intent(MainActivity.this,
+                    AddUser.class);
+            startActivity(addUserIntent);
+        }
+        else if(removeUserSelect) {
+            Intent removeUserIntent = new Intent(MainActivity.this,
+                    RemoveUser.class);
+            startActivity(removeUserIntent);
+        }
     }
 
     @Override
