@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
     protected void onCreate(Bundle savedInstanceState) {
         userInfo = getApplicationContext().getSharedPreferences("DoorLockInfo", MODE_PRIVATE);
         userInfoEditor = userInfo.edit();
-        Log.d("Main", ">>>>>>>>>>>>>>> shit created");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -64,14 +63,20 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
 
         new ConnectBT().execute();
 
+        if (!userInfo.contains("username") | !userInfo.contains("password")) {
+            Intent initialLoginIntent = new Intent(MainActivity.this,
+                    InitialLogin.class);
+            startActivityForResult(initialLoginIntent, 2);
+        }
+
         View.OnClickListener handler = new View.OnClickListener() {
             public void onClick(View v) {
-                if (!userInfo.contains("username") | !userInfo.contains("password")) {
-                    Intent initialLoginIntent = new Intent(MainActivity.this,
-                            InitialLogin.class);
-                    startActivityForResult(initialLoginIntent, 2);
-                }
-                else if (v == btnOn) {
+//                if (!userInfo.contains("username") | !userInfo.contains("password")) {
+//                    Intent initialLoginIntent = new Intent(MainActivity.this,
+//                            InitialLogin.class);
+//                    startActivityForResult(initialLoginIntent, 2);
+//                }
+                if (v == btnOn) {
                     onButtonSelect = true;
                     offButtonSelect = false;
                     addUserSelect = false;
@@ -251,6 +256,7 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
 
         if (myBtSocket != null) {
             try {
+                Log.d("Main", ">>>>>>>>>>>>>>>> remove user sending " + "remove#"+userName+"#"+username);
                 byte[] message = Security.mergeByteString(userName+"#", Security.run("remove#"+userName+"#"+username, userPass));
                 myBtSocket.getOutputStream().write(Security.AddNewline(message));
             } catch (IOException e) { e.printStackTrace(); }
@@ -306,17 +312,9 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
             startActivityForResult(addUserIntent, 1);
         }
         else if(removeUserSelect) {
-            Log.d("Main", ">>>>>>>>>>>>>>>> on auth remove user");
             Intent removeUserIntent = new Intent(MainActivity.this,
                     RemoveUser.class);
-            Log.d("Main", ">>>>>>>>>>>>>>>>> intnet remove user created");
-//            startActivityForResult(removeUserIntent, 3);
-            startActivity(removeUserIntent);
-            Log.d("Main", ">>>>>>>>>>>>>>>>>>>>> shit");
-//            Intent addUserIntent = new Intent(MainActivity.this,
-//                    RemoveUser.class);
-//            startActivityForResult(addUserIntent, 3);
-
+            startActivityForResult(removeUserIntent, 3);
         }
     }
 
