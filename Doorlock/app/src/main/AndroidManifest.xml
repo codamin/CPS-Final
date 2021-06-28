@@ -29,6 +29,9 @@
         <activity
             android:name=".RemoveUser"
             android:label="RemoveUser" />
+        <activity
+            android:name=".InitialLogin"
+            android:label="InitialLogin" />
     </application>
 
 </manifest>
