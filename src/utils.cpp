@@ -87,6 +87,9 @@ void removeUser(String id) {
 }
 
 char* getPassword(String id) {
+  if(id == admin_user.id) {
+    return admin_user.password.c_str();
+  }
   for(int i=0; i < users_size; i++) {
     if(users[i].id == id) {
       return(users[i].password.c_str());
