@@ -97,7 +97,7 @@ public class Security {
         return ans;
     }
 
-    private static String pass16(String pass) {
+    public static String pass16(String pass) {
         if(pass.length() == 16)
             return pass;
         else if(pass.length() > 16)

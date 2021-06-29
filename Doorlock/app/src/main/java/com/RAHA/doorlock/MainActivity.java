@@ -244,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
 
         if (myBtSocket != null) {
             try {
-                byte[] message = Security.mergeByteString(userName+"#", Security.run("add#"+userName+"#"+username+"#"+password, userPass));
+                byte[] message = Security.mergeByteString(userName+"#", Security.run("add#"+userName+"#"+username+"#"+Security.pass16(password), userPass));
                 myBtSocket.getOutputStream().write(Security.AddNewline(message));
             } catch (IOException e) { e.printStackTrace(); }
         }
