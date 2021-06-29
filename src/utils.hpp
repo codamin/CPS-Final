@@ -7,7 +7,7 @@
 
 typedef unsigned char BYTE;
 
-#define MAX_SPLIT_SIZE 4
+#define MAX_SPLIT_SIZE 5
 #define MAX_USERS_NUMBER 10
 #define MOTOR_PIN 8
 #define SERVO_OPEN_POSITION 0
@@ -27,7 +27,16 @@ class User {
     String password;
 };
 
-String* authorize(String id, String cypher);
+struct Tokens
+{
+  bool isOk;
+  String token1;
+  String token2;
+  String token3;
+  String token4;
+};
+
+Tokens authorize(String id, String cypher);
 User addUser(String id, String password);
 void removeUser(String id);
 char* getPassword(String id);
@@ -38,7 +47,7 @@ String* split(String str , char c);
 void recv_cmd(Servo motor);
 void lock(Servo motor);
 void open(Servo motor);
-void process_cmd(String* plain_text_splitted, Servo motor, String id);
+void process_cmd(Tokens tokens, Servo motor, String id);
 void set_admin(String id, String password);
 
 #endif
