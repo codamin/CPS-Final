@@ -9,12 +9,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.Set;
 
-public class Connect
-{
-    //widgets
-    Button btnPaired;
-    ListView devicelist;
-    //Bluetooth
+public class Connect {
     private BluetoothAdapter myBluetooth = null;
     private Set<BluetoothDevice> pairedDevices;
     public static String EXTRA_ADDRESS = "device_address";
@@ -31,10 +26,7 @@ public class Connect
         {
             System.out.println("Turn On Your Bluetooth!!!");
         }
-
         pairedDevicesList();
-
-
     }
 
     String pairedDevicesList()
@@ -47,13 +39,9 @@ public class Connect
         {
             for(BluetoothDevice bt : pairedDevices)
             {
-                Log.d("Connect", ">>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-                Log.d("Connect", bt.getName());
-                System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-                System.out.println(bt.getName());
-//                if (bt.getName().equals("DESKTOP-254608Q")) {
+                if (bt.getName().equals("DESKTOP-254608Q")) {
 //                if (bt.getName().equals("AMIN")) {
-                if (bt.getName().equals("DESKTOP-O50CT6R")) {
+//                if (bt.getName().equals("DESKTOP-O50CT6R")) {
                     return bt.getAddress();
                 }
             }

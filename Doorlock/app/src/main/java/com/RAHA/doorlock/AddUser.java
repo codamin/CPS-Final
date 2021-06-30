@@ -30,7 +30,7 @@ public class AddUser extends AppCompatActivity {
                 String passwordString = password.getText().toString();
 
                 if(macAddressString.length() <= 0)
-                    Toast.makeText(AddUser.this, "Please enter MAC address", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddUser.this, "Please enter username", Toast.LENGTH_SHORT).show();
 
                 if(passwordString.length() <= 0)
                     Toast.makeText(AddUser.this, "Please enter password", Toast.LENGTH_SHORT).show();
@@ -39,8 +39,6 @@ public class AddUser extends AppCompatActivity {
                     Intent intent = new Intent();
                     intent.putExtra("username", macAddressString);
                     intent.putExtra("password", passwordString);
-                    Log.d("AddUser", ">>>>>>>>>>>>>>>>>>username " + macAddressString);
-                    Log.d("AddUser", ">>>>>>>>>>>>>>>>>>password " + passwordString);
                     setResult(Activity.RESULT_OK, intent);
                     finish();
                 }
