@@ -51,9 +51,9 @@ public class Connect
                 Log.d("Connect", bt.getName());
                 System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>");
                 System.out.println(bt.getName());
-                if (bt.getName().equals("DESKTOP-254608Q")) {
+//                if (bt.getName().equals("DESKTOP-254608Q")) {
 //                if (bt.getName().equals("AMIN")) {
-//                if (bt.getName().equals("DESKTOP-O50CT6R")) {
+                if (bt.getName().equals("DESKTOP-O50CT6R")) {
                     return bt.getAddress();
                 }
             }

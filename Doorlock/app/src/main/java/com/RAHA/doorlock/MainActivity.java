@@ -71,11 +71,6 @@ public class MainActivity extends AppCompatActivity implements BiometricCallback
 
         View.OnClickListener handler = new View.OnClickListener() {
             public void onClick(View v) {
-//                if (!userInfo.contains("username") | !userInfo.contains("password")) {
-//                    Intent initialLoginIntent = new Intent(MainActivity.this,
-//                            InitialLogin.class);
-//                    startActivityForResult(initialLoginIntent, 2);
-//                }
                 if (v == btnOn) {
                     onButtonSelect = true;
                     offButtonSelect = false;
