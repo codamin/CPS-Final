@@ -13,9 +13,9 @@ void open(Servo motor) {
 }
 
 void lock(Servo motor) {
-  for (int pos = 180; pos >= 0; pos -= 1) {
+  for (int pos = 0; pos <= 90; pos += 1) {
     motor.write(pos);
-    delay(5);
+    delay(3);
   }
 }
 
@@ -166,8 +166,6 @@ void process_cmd(Tokens tokens, Servo motor, String id) {
       return;
     }
     Serial.println("adding user");
-    Serial.println(tokens.token3);
-    Serial.println(tokens.token4);
     addUser(tokens.token3, tokens.token4);
   }
   if(tokens.token1 == "remove") {
